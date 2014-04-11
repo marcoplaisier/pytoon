@@ -7,7 +7,7 @@ python:
 
 before_install:
   - curl http://download.tinkerforge.com/bindings/python/tinkerforge_python_bindings_2_1_0.zip > tinkerforge_python_bindings_2_1_0.zip
-  - tar -xvf tinkerforge_python_bindings_2_1_0.zip
+  - unzip tinkerforge_python_bindings_2_1_0.zip
   - easy_install tinkerforge.egg
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
