@@ -5,8 +5,15 @@ language: python
 python:
   - "3.3"
 
+before_install:
+  - curl http://download.tinkerforge.com/bindings/python/tinkerforge_python_bindings_2_1_0.zip > tinkerforge_python_bindings_2_1_0.zip
+  - tar -xvf tinkerforge_python_bindings_2_1_0.zip
+  - easy_install tinkerforge.egg
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r requirements.txt --use-mirrors
+install:
+  - easy_install tinkerforge.egg
+  - pip install -r requirements.txt
 
 # command to run tests, e.g. python setup.py test
 script:
