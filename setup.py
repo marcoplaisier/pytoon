@@ -32,6 +32,8 @@ setup(
     include_package_data=True,
     install_requires=[
     ],
+    dependency_links=[
+        'http://download.tinkerforge.com/bindings/python/tinkerforge_python_bindings_2_1_0.zip#egg=tinkerforge-2.1.0'],
     license="BSD",
     zip_safe=False,
     keywords='pytoon',
