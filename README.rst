@@ -20,4 +20,9 @@ PyToon measures electricity, water and gas meters and creates fancy graphs
 Features
 --------
 
-* TODO
+* Interfaces with Tinkerforge bricks and bricklets
+* Measures electricity, gas and water
+* Stores history data
+* Runs on Raspberry Pi
+* Nice graphs
+* Hardware not included
