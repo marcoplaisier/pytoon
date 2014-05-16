@@ -1,9 +1,11 @@
 from behave import *
+from pytoon.pytoon import Connection
 
 @given('we connect to the master brick')
 def step_impl(context):
-    assert False
+    brick_conn = Connection()
+    context.connected = brick_conn.connect()
 
-@then('we can find all sensors connect to the master brick')
+@then('we are connected')
 def step_impl(context):
-    assert False
+    assert context.connected
