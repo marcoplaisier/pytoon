@@ -1,11 +1,15 @@
 from behave import *
-from pytoon.pytoon import Connection
+from pytoon.connection import BrickConnection
+from mock import patch, call
 
 @given('we connect to the master brick')
-def step_impl(context):
-    brick_conn = Connection()
-    context.connected = brick_conn.connect()
+@patch('pytoon.connection.IPConnection')
+def step_impl(context, mock_class):
+    host = None
+    port = None
+    context.brick_conn = BrickConnection(host, port)
 
 @then('we are connected')
 def step_impl(context):
-    assert context.connected
+    calls = [call(), call()]
+    context.brick_conn.connection.register_callback.has_calls(calls)
