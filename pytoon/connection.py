@@ -34,7 +34,7 @@ class BrickConnection(object):
     def cb_line(self, *args, **kwargs):
         state = self.line.get_reflectivity_callback_threshold()
         if state[0] == Line.THRESHOLD_OPTION_SMALLER:
-            print('{} - 0.0001m3'.format(datetime.now()))
+            print('{} - 0.0001m3 water'.format(datetime.now()))
             self.line.set_reflectivity_callback_threshold('>', 3900, 0)
         elif state[0] == Line.THRESHOLD_OPTION_GREATER:
             self.line.set_reflectivity_callback_threshold('<', 3880, 0)
