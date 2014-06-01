@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-  
-
+# -*- coding: utf-8 -*-
+from datetime import datetime
+import sqlite3
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_ambient_light import AmbientLight
@@ -12,6 +13,10 @@ class BrickConnection(object):
         self.hall = None
         self.ambient = None
         self.line = None
+
+        self.db_conn = sqlite3.connect(':memory:')
+        c = self.db_conn.cursor()
+        c.execute('''CREATE TABLE electricity (date text)''')
 
         # Create IP Connection
         self.connection = IPConnection()
@@ -28,7 +33,9 @@ class BrickConnection(object):
         pass
 
     def cb_ambient(self, *args, **kwargs):
-        pass
+        c = self.db_conn.cursor()
+        c.execute('''INSERT INTO electricity VALUES ('{}')'''.format(datetime.now()))
+        self.db_conn.commit()
 
     def cb_line(self, *args, **kwargs):
         pass
@@ -44,6 +51,8 @@ class BrickConnection(object):
         self.ambient = AmbientLight(args[0], self.connection)
         self.ambient.register_callback(self.ambient.CALLBACK_ILLUMINANCE_REACHED, self.cb_ambient)
         self.ambient.set_illuminance_callback_threshold('>', 0, 10)
+        self.ambient.set_analog_value_callback_period(400)
+        self.ambient.measured_amount = 0
 
     def create_line_object(self, *args, **kwargs):
         # Create line object
