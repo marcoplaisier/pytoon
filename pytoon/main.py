@@ -2,14 +2,25 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from flask import Flask, app
 from pytoon.connection import BrickConnection
 
 
+app = Flask(__name__)
+
+
 class PyToon(object):
+    @staticmethod
     def main(self):
         host = "192.168.178.35"
         port = 4223
-        connection = BrickConnection(host, port)
+        BrickConnection(host, port)
+
+@app.route('/')
+def index():
+    return('<h1>Test PyToon</h1>')
 
 if __name__ == '__main__':
-    sys.exit(PyToon().main())
+    PyToon().main()
+    app.run(debug=True)
+    input()
