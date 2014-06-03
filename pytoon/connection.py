@@ -14,10 +14,12 @@ class BrickConnection(object):
         self.ambient = None
         self.line = None
 
-        self.db_conn = sqlite3.connect(':memory:')
+        self.db_conn = sqlite3.connect('app.db')
         c = self.db_conn.cursor()
-        c.execute('''CREATE TABLE electricity (date TEXT, hour INTEGER, minute INTEGER, second INTEGER,
+        c.execute('''CREATE TABLE IF NOT EXISTS electricity (date TEXT, hour INTEGER, minute INTEGER, second INTEGER,
                      microsecond INTEGER)''')
+        self.db_conn.commit()
+        self.db_conn.close()
 
         # Create IP Connection
         self.connection = IPConnection()
@@ -39,11 +41,15 @@ class BrickConnection(object):
         When the connected ambient light sensor detects an increase in the luminance, this callback is called. This
         results in the timestamp of this call being written into the database for later processing.
         """
-        c = self.db_conn.cursor()
+        print("called")
+        db_conn = sqlite3.connect('app.db')
+        c = db_conn.cursor()
         dt = datetime.now()
+
         c.execute('''INSERT INTO electricity VALUES (?, ?, ?, ?, ?)''',
                   (dt.date(), dt.hour, dt.minute, dt.second, dt.microsecond))
-        self.db_conn.commit()
+        db_conn.commit()
+        c.close()
 
     def cb_line(self, *args, **kwargs):
         pass
