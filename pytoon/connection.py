@@ -16,7 +16,8 @@ class BrickConnection(object):
 
         self.db_conn = sqlite3.connect(':memory:')
         c = self.db_conn.cursor()
-        c.execute('''CREATE TABLE electricity (date text)''')
+        c.execute('''CREATE TABLE electricity (date TEXT, hour INTEGER, minute INTEGER, second INTEGER,
+                     microsecond INTEGER)''')
 
         # Create IP Connection
         self.connection = IPConnection()
@@ -34,7 +35,9 @@ class BrickConnection(object):
 
     def cb_ambient(self, *args, **kwargs):
         c = self.db_conn.cursor()
-        c.execute('''INSERT INTO electricity VALUES ('{}')'''.format(datetime.now()))
+        dt = datetime.now()
+        c.execute('''INSERT INTO electricity VALUES (?, ?, ?, ?, ?)''',
+                  (dt.date(), dt.hour, dt.minute, dt.second, dt.microsecond))
         self.db_conn.commit()
 
     def cb_line(self, *args, **kwargs):
@@ -102,5 +105,7 @@ class BrickConnection(object):
 
 
 if __name__ == "__main__":
-    BrickConnection()
+    host = "192.168.178.35"
+    port = 4223
+    BrickConnection(host, port)
     input('Press key to exit\n')
