@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import sqlite3
@@ -122,8 +122,7 @@ class BrickConnection(object):
                 self.create_hall_object(uid, connected_uid, position, hardware_version, firmware_version,
                                         device_identifier, enumeration_type)
             if device_identifier == AmbientLight.DEVICE_IDENTIFIER:
-                self.create_ambient_light_object(uid, connected_uid, position, hardware_version, firmware_version,
-                                                 device_identifier, enumeration_type)
+                self.create_ambient_light_object(uid)
             if device_identifier == Line.DEVICE_IDENTIFIER:
                 self.create_line_object(uid, connected_uid, position, hardware_version, firmware_version,
                                         device_identifier, enumeration_type)
@@ -134,7 +133,7 @@ class BrickConnection(object):
         
         Enumerate devices again. If we reconnected, the Brick may have been offline and the configuration may be lost. 
         In this case we don't care for the reason of the connection
-        :param connected_reason: 
+        :param connected_reason:
         """
         self.connection.enumerate()
 
