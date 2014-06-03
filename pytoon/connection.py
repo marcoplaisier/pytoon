@@ -91,7 +91,7 @@ class BrickConnection(object):
         self.line.set_reflectivity_callback_threshold('>', 3905, 0)
 
     @staticmethod
-    def device_connected(enumeration_type):
+    def is_device_connected(enumeration_type):
         """Check whether new devices become connected or available
 
         Returns True is a devices is connected to the master brick or becomes available
@@ -117,7 +117,7 @@ class BrickConnection(object):
         :param device_identifier: 
         :param enumeration_type: 
         """
-        if self.device_connected(enumeration_type):
+        if self.is_device_connected(enumeration_type):
             if device_identifier == HallEffect.DEVICE_IDENTIFIER:
                 self.create_hall_object(uid, connected_uid, position, hardware_version, firmware_version,
                                         device_identifier, enumeration_type)
