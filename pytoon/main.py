@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 
 class PyToon(object):
-    @staticmethod
     def main(self):
         host = "192.168.178.35"
         port = 4223
@@ -18,7 +17,7 @@ class PyToon(object):
 
 @app.route('/')
 def index():
-    return('<h1>Test PyToon</h1>')
+    return '<h1>Test PyToon</h1>'
 
 if __name__ == '__main__':
     PyToon().main()
