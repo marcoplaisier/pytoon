@@ -1,44 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-from multiprocessing import Pipe
-from flask import Flask, app
-import time
 from pytoon.connection import BrickConnection
-from flask.ext.sqlalchemy import SQLAlchemy
+from pytoon.models import db, app, Electricity
 
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.db')
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
-    return '<h1>Test PyToon</h1>'
-
-
-class Timestamp(db.Model):
-    __tablename__ = 'electricity'
-    timestamp = db.Column(db.DateTime, primary_key=True)
+    timestamps = Electricity.query.all()
+    data = '<table><tbody>'
+    for t in timestamps:
+        data = data + '<tr><td>{}</td></tr>'.format(t.timestamp)
+    data = data + '</tbody></table>'
+    return data
 
 
 class PyToon(object):
-    def __init__(self):
-        input_p, self.output_p = Pipe()
+    def __init__(self, database):
         host = "192.168.178.35"
         port = 4223
-        BrickConnection(host, port, input_p)
-
-    def main_loop(self):
-        while True:
-            time.sleep(0.5)
-            if self.output_p.poll(0):
-                db.session.add(self.output_p.recv())
+        BrickConnection(host, port, database)
 
 if __name__ == '__main__':
-    pt = PyToon()
+    db.create_all(app=app)
+    pt = PyToon(db)
 
     app.run(debug=True, use_reloader=False)
