@@ -1,6 +1,7 @@
 from behave import given, when, then
 from mock import patch, call
 from tinkerforge.ip_connection import IPConnection
+from pytoon.models import Electricity, db
 
 from pytoon.connection import BrickConnection
 
@@ -9,7 +10,7 @@ from pytoon.connection import BrickConnection
 def step_impl(context, mock_class):
     host = None
     port = None
-    context.brick_conn = BrickConnection(host, port)
+    context.brick_conn = BrickConnection(host, port, db)
 
 @then('we are connected')
 def step_impl(context):
@@ -30,7 +31,5 @@ def step_impl(context, sensor_type):
 
 @then('we store the {sensor_type} measurements in the database')
 def step_impl(context, sensor_type):
-    c = context.brick_conn.db_conn.cursor()
-    c.execute('SELECT * FROM {}'.format(sensor_type))
-    result = c.fetchone()
-    assert (result is not None)
+    result = Electricity.query.all()
+    assert result is not None

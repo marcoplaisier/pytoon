@@ -15,6 +15,7 @@ from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_ambient_light import AmbientLight
 from tinkerforge.bricklet_line import Line
 from pytoon.connection import BrickConnection
+from pytoon.models import db
 
 
 class TestConnection(unittest.TestCase):
@@ -23,7 +24,7 @@ class TestConnection(unittest.TestCase):
         self.patch_ip_connection.start()
         host = "192.168.178.35"
         port = 4223
-        self.bc = BrickConnection(host, port)
+        self.bc = BrickConnection(host, port, db)
 
     def test_cb_connected(self):
         self.bc.connection.reset_mock()

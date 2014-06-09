@@ -10,8 +10,8 @@ def index():
     timestamps = Electricity.query.all()
     data = '<table><tbody>'
     for t in timestamps:
-        data = data + '<tr><td>{}</td></tr>'.format(t.timestamp)
-    data = data + '</tbody></table>'
+        data += '<tr><td>{}</td></tr>'.format(t.timestamp)
+    data += '</tbody></table>'
     return data
 
 
