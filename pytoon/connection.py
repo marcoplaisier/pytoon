@@ -1,7 +1,6 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
-import sqlite3
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_ambient_light import AmbientLight
@@ -9,17 +8,11 @@ from tinkerforge.bricklet_line import Line
 
 
 class BrickConnection(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, end_point):
         self.hall = None
         self.ambient = None
         self.line = None
-
-        self.db_conn = sqlite3.connect('app.db')
-        c = self.db_conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS electricity (date TEXT, hour INTEGER, minute INTEGER, second INTEGER,
-                     microsecond INTEGER)''')
-        self.db_conn.commit()
-        self.db_conn.close()
+        self.end_point = end_point
 
         # Create IP Connection
         self.connection = IPConnection()
@@ -41,15 +34,8 @@ class BrickConnection(object):
         When the connected ambient light sensor detects an increase in the luminance, this callback is called. This
         results in the timestamp of this call being written into the database for later processing.
         """
-        print("called")
-        db_conn = sqlite3.connect('app.db')
-        c = db_conn.cursor()
         dt = datetime.now()
-
-        c.execute('''INSERT INTO electricity VALUES (?, ?, ?, ?, ?)''',
-                  (dt.date(), dt.hour, dt.minute, dt.second, dt.microsecond))
-        db_conn.commit()
-        c.close()
+        self.end_point.send(dt)
 
     def cb_line(self, *args, **kwargs):
         pass
