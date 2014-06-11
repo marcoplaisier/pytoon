@@ -5,6 +5,9 @@ language: python
 python:
   - "3.3"
 
+services:
+  - sqlite
+
 before_install:
   - curl http://download.tinkerforge.com/bindings/python/tinkerforge_python_bindings_2_1_0.zip > tinkerforge_python_bindings_2_1_0.zip
   - unzip tinkerforge_python_bindings_2_1_0.zip
