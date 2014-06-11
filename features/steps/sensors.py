@@ -31,6 +31,5 @@ def step_impl(context, sensor_type):
 
 @then('we store the {sensor_type} measurements in the database')
 def step_impl(context, sensor_type):
-    db.create_all()
     result = Electricity.query.all()
     assert result is not None

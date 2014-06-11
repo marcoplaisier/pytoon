@@ -22,7 +22,7 @@ class PyToon(object):
         BrickConnection(host, port, database)
 
 if __name__ == '__main__':
-    db.create_all(app=app)
+    db.create_all()
     pt = PyToon(db)
 
     app.run(debug=True, use_reloader=False)
