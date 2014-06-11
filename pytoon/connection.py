@@ -37,8 +37,11 @@ class BrickConnection(object):
         """
         electricity_timestamp = models.Electricity(timestamp=datetime.now())
         print('Electricity: {}'.format(electricity_timestamp))
+        print('trying to add')
         self.database.session.add(electricity_timestamp)
+        print('done adding')
         self.database.session.commit()
+        print('done committing')
 
     def cb_line(self, *args, **kwargs):
         pass
