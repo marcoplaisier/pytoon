@@ -1,8 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 from pytoon.connection import BrickConnection
-from pytoon.models import db, app, Electricity
+
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+db = SQLAlchemy(app)
+print(db.get_app())
+print('starting database')
+db.create_all()
+print('database created')
 
 
 @app.route('/')
@@ -21,10 +32,14 @@ class PyToon(object):
         port = 4223
         BrickConnection(host, port, database)
 
+
+class Electricity(db.Model):
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
+    def __repr__(self):
+        return '<Timestamp {}>'.format(self.timestamp)
+
 if __name__ == '__main__':
-    print('starting database')
-    db.create_all()
-    print('database created')
     pt = PyToon(db)
 
     app.run(debug=True, use_reloader=False)

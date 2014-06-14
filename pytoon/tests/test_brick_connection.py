@@ -15,7 +15,7 @@ from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_ambient_light import AmbientLight
 from tinkerforge.bricklet_line import Line
 from pytoon.connection import BrickConnection
-from pytoon.models import db
+from pytoon.main import db
 
 
 class TestConnection(unittest.TestCase):

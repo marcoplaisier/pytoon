@@ -1,7 +1,7 @@
 from behave import given, when, then
 from mock import patch, call
 from tinkerforge.ip_connection import IPConnection
-from pytoon.models import Electricity, db
+from pytoon.main import Electricity, db
 
 from pytoon.connection import BrickConnection
 

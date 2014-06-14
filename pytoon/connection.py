@@ -5,7 +5,6 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_ambient_light import AmbientLight
 from tinkerforge.bricklet_line import Line
-from pytoon import models
 
 
 class BrickConnection(object):
@@ -35,7 +34,8 @@ class BrickConnection(object):
         When the connected ambient light sensor detects an increase in the luminance, this callback is called. This
         results in the timestamp of this call being written into the database for later processing.
         """
-        electricity_timestamp = models.Electricity(timestamp=datetime.now())
+        from pytoon.main import Electricity
+        electricity_timestamp = Electricity(timestamp=datetime.now())
         print('Electricity: {}'.format(electricity_timestamp))
         print('trying to add')
         self.database.session.add(electricity_timestamp)
