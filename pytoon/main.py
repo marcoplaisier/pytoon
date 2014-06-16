@@ -7,12 +7,12 @@ from pytoon.connection import BrickConnection
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/app.db'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 print(db.get_app())
 print('starting database')
-db.create_all()
+
 print('database created')
 
 
@@ -36,8 +36,13 @@ class PyToon(object):
 class Electricity(db.Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
 
+    def __init__(self, timestamp):
+        self.timestamp = timestamp
+
     def __repr__(self):
         return '<Timestamp {}>'.format(self.timestamp)
+
+db.create_all()
 
 if __name__ == '__main__':
     pt = PyToon(db)
