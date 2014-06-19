@@ -1,7 +1,6 @@
 from behave import given, when, then
 from mock import patch, call
 from tinkerforge.ip_connection import IPConnection
-<<<<<<< HEAD
 
 @given('we connect to the master brick')
 def step_impl(context):
@@ -10,7 +9,7 @@ def step_impl(context):
 @then('we are connected')
 def step_impl(context):
     pass
-=======
+
 from pytoon.main import Electricity, db
 
 from pytoon.connection import BrickConnection
@@ -43,4 +42,3 @@ def step_impl(context, sensor_type):
 def step_impl(context, sensor_type):
     result = Electricity.query.all()
     assert result is not None
->>>>>>> electricity

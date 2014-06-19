@@ -8,7 +8,6 @@ PyToon
 .. image:: https://travis-ci.org/marcofinalist/pytoon.png?branch=master
         :target: https://travis-ci.org/marcofinalist/pytoon
 
-<<<<<<< HEAD
 .. image:: https://landscape.io/github/marcofinalist/pytoon/master/landscape.png
    :target: https://landscape.io/github/marcofinalist/pytoon/master
    :alt: Code Health
@@ -24,7 +23,6 @@ Most hardware available on the market today costs at least € 200,-. You may ev
 an energy supplier. And even then it can't even measure your water consumption! PyToon will measure your water
 consumption, your data is safe inside your home network, and it will only set you back € 120,- but you do need to
 install it yourself.
->>>>>>> electricity
 
 * Free software: BSD license
 * Documentation: http://pytoon.rtfd.org.
