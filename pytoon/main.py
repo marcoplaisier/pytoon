@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-from flask import Flask
+from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from pytoon.connection import BrickConnection
 
@@ -15,11 +14,7 @@ db = SQLAlchemy(app)
 @app.route('/')
 def index():
     timestamps = Electricity.query.all()
-    data = '<table><tbody>'
-    for t in timestamps:
-        data += '<tr><td>{}</td></tr>'.format(t.timestamp)
-    data += '</tbody></table>'
-    return data
+    return render_template('index.html', data=timestamps)
 
 
 class PyToon(object):
@@ -36,7 +31,7 @@ class Electricity(db.Model):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return '<Timestamp {}>'.format(self.timestamp)
+        return '{}'.format(self.timestamp)
 
 db.create_all()
 
