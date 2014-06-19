@@ -1,2 +1,7 @@
-wheel==0.23.0
-behave==1.2.4
+flask
+wheel
+behave
+mock
+nose
+Flask-Restless
+Flask-SQLAlchemy

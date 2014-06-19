@@ -9,20 +9,14 @@ Tests for `pytoon` module.
 """
 
 import unittest
+from mock import patch, Mock
+from pytoon.main import PyToon
 
-from pytoon import pytoon
 
-
+@patch('pytoon.main.BrickConnection')
 class TestPytoon(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def test_something(self):
-        pass
-
-    def tearDown(self):
-        pass
+    def test_main_loop(self, mock_class):
+        PyToon().main()
 
 if __name__ == '__main__':
     unittest.main()
