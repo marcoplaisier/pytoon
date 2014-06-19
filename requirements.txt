@@ -5,4 +5,3 @@ mock
 nose
 Flask-Restless
 Flask-SQLAlchemy
-pylint

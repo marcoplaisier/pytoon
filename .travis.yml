@@ -19,4 +19,3 @@ install:
 script:
   - nosetests
   - behave
-  - pylint .
