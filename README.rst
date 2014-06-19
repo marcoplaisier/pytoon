@@ -14,8 +14,6 @@ PyToon
 
 PyToon measures electricity, water and gas meters and creates fancy graphs
 =======
-.. image:: https://pypip.in/d/pytoon/badge.png
-        :target: https://crate.io/packages/pytoon?version=latest
 
 PyToon measures electricity, water and gas consumption and gives you the ability to monitor your energy and water usage
 every second of every day.
