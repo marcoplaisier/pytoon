@@ -10,10 +10,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/app.db'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
-print(db.get_app())
-print('starting database')
-
-print('database created')
 
 
 @app.route('/')
