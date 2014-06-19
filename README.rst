@@ -8,6 +8,9 @@ PyToon
 .. image:: https://travis-ci.org/marcofinalist/pytoon.png?branch=master
         :target: https://travis-ci.org/marcofinalist/pytoon
 
+.. image:: https://landscape.io/github/marcofinalist/pytoon/master/landscape.png
+   :target: https://landscape.io/github/marcofinalist/pytoon/master
+   :alt: Code Health
 
 PyToon measures electricity, water and gas meters and creates fancy graphs
 
