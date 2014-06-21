@@ -33,6 +33,17 @@ class Electricity(db.Model):
     def __repr__(self):
         return '{}'.format(self.timestamp)
 
+
+class Gas(db.Model):
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
+    def __init__(self, timestamp):
+        self.timestamp = timestamp
+
+    def __repr__(self):
+        return '{}'.format(self.timestamp)
+
+
 db.create_all()
 
 if __name__ == '__main__':
