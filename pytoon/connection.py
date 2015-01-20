@@ -26,7 +26,11 @@ class BrickConnection(object):
         self.connection.enumerate()
 
     def cb_hall(self, *args, **kwargs):
-        pass
+        from pytoon.main import Gas
+        gas_timestamp = Gas(timestamp=datetime.now())
+        print('Gas: {}'.format(gas_timestamp))
+        self.database.session.add(gas_timestamp)
+        self.database.session.commit()
 
     def cb_ambient(self, *args, **kwargs):
         """Callback for the ambient light sensor.
