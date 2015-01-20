@@ -13,8 +13,9 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
-    timestamps = Electricity.query.all()
-    return render_template('index.html', data=timestamps)
+    timestamps_electricity = Electricity.query.all()
+    timestamps_gas = Gas.query.all()
+    return render_template('index.html', gas_data=timestamps_gas, electricity_data=timestamps_electricity)
 
 
 class PyToon(object):

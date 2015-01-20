@@ -9,11 +9,22 @@
 
         <tbody>
         <thead>
+            <th>Gas</th>
+        </thead>
+        {% for timestamp in gas_data %}
+            <tr><td>{{ timestamp }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table>
+
+        <tbody>
+        <thead>
             <th>Electricity</th>
             <th>Gas</th>
             <th>Water</th>
         </thead>
-        {% for timestamp in data %}
+        {% for timestamp in electricity_data %}
             <tr><td>{{ timestamp }}</td></tr>
         {% endfor %}
         </tbody>
