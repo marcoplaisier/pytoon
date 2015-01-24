@@ -47,15 +47,6 @@ class TestConnection(unittest.TestCase):
         self.assertIsNotNone(self.bc.line)
         self.patch_ip_connection.start()
 
-    def test_cb_enumerate_ambient(self):
-        self.bc.connection.reset_mock()
-        self.assertIsNone(self.bc.line)
-        self.patch_ip_connection.stop()
-        self.bc.cb_enumerate('3', None, None, None, None, device_identifier=21,
-                             enumeration_type=IPConnection.ENUMERATION_TYPE_CONNECTED)
-        self.assertIsNotNone(self.bc.ambient)
-        self.patch_ip_connection.start()
-
     def tearDown(self):
         self.patch_ip_connection.stop()
 
