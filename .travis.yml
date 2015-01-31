@@ -11,16 +11,14 @@ branches:
     - master
     - develop
 
-before_install:
-  - curl http://download.tinkerforge.com/bindings/python/tinkerforge_python_bindings_2_1_0.zip > tinkerforge_python_bindings_2_1_0.zip
-  - unzip tinkerforge_python_bindings_2_1_0.zip
-
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - easy_install tinkerforge.egg
   - pip install -r requirements.txt
 
 # command to run tests, e.g. python setup.py test
 script:
-  - nosetests
+  - nosetests --with-coverage --cover-package=pytoon
   - behave
+
+after_success:
+  - coveralls
