@@ -7,10 +7,10 @@ import statsd
 
 
 class BrickConnection(object):
-    ELECTRICITY_BOTTOM_THRESHOLD = 3000
-    ELECTRICITY_TOP_THRESHOLD = 3905
-    WATER_BOTTOM_THRESHOLD = 1750
-    WATER_TOP_THRESHOLD = 1800
+    ELECTRICITY_BOTTOM_THRESHOLD = 1800
+    ELECTRICITY_TOP_THRESHOLD = 1860
+    WATER_BOTTOM_THRESHOLD = 3845
+    WATER_TOP_THRESHOLD = 3880
 
     def __init__(self, host, port):
         self.gas_sensor = None
@@ -102,10 +102,10 @@ class BrickConnection(object):
                 self.create_gas_sensor(uid, connected_uid, position, hardware_version, firmware_version,
                                        device_identifier, enumeration_type)
             if device_identifier == Line.DEVICE_IDENTIFIER:
-                if position == 'B':
+                if position == 'A':
                     self.create_water_sensor(uid, connected_uid, position, hardware_version, firmware_version,
                                              device_identifier, enumeration_type)
-                elif position == 'C':
+                elif position == 'B':
                     self.create_electricity_sensor(uid, connected_uid, position, hardware_version, firmware_version,
                                                    device_identifier, enumeration_type)
 
@@ -121,7 +121,7 @@ class BrickConnection(object):
 
 
 if __name__ == "__main__":
-    host = "192.168.178.35"
+    host = "192.168.178.42"
     port = 4223
     BrickConnection(host, port)
     input('Press key to exit\n')
