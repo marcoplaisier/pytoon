@@ -1,18 +1,24 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_hall_effect import HallEffect
-from tinkerforge.bricklet_ambient_light import AmbientLight
 from tinkerforge.bricklet_line import Line
+import statsd
 
 
 class BrickConnection(object):
-    def __init__(self, host, port, database):
-        self.hall = None
-        self.ambient = None
-        self.line = None
-        self.database = database
+    ELECTRICITY_BOTTOM_THRESHOLD = 3000
+    ELECTRICITY_TOP_THRESHOLD = 3905
+    WATER_BOTTOM_THRESHOLD = 1750
+    WATER_TOP_THRESHOLD = 1800
+
+    def __init__(self, host, port):
+        self.gas_sensor = None
+        self.water_sensor = None
+        self.electricity_sensor = None
+        self.electricity_stat = statsd.Counter('pytoon.water')
+        self.gas_stat = statsd.Counter('pytoon.gas')
+        self.water_stat = statsd.Counter('pytoon.water')
 
         # Create IP Connection
         self.connection = IPConnection()
@@ -25,69 +31,45 @@ class BrickConnection(object):
         self.connection.connect(host, port)
         self.connection.enumerate()
 
-    def cb_hall(self, *args, **kwargs):
-        from pytoon.main import Gas
-        gas_timestamp = Gas(timestamp=datetime.now())
-        print('Gas: {}'.format(gas_timestamp))
-        self.database.session.add(gas_timestamp)
-        self.database.session.commit()
+    def cb_gas(self, *args, **kwargs):
+        result = self.gas_stat.increment()
+        if not result:
+            raise ConnectionError('Cannot reach statsd server')
 
-    def cb_ambient(self, *args, **kwargs):
-        """Callback for the ambient light sensor.
+    def cb_electricity(self, *args, **kwargs):
+        if self.electricity_sensor.get_reflectivity_callback_threshold().option == '<':
+            self.electricity_sensor.set_reflectivity_callback_threshold('>', self.ELECTRICITY_TOP_THRESHOLD, 0)
+        else:
+            self.electricity_sensor.set_reflectivity_callback_threshold('<', self.ELECTRICITY_BOTTOM_THRESHOLD, 0)
+            result = self.electricity_stat.increment()
+            if not result:
+                raise ConnectionError('Cannot reach statsd server')
 
-        When the connected ambient light sensor detects an increase in the luminance, this callback is called. This
-        results in the timestamp of this call being written into the database for later processing.
-        """
-        from pytoon.main import Electricity
-        electricity_timestamp = Electricity(timestamp=datetime.now())
-        print('Electricity: {}'.format(electricity_timestamp))
-        self.database.session.add(electricity_timestamp)
-        self.database.session.commit()
+    def cb_water(self, *args, **kwargs):
+        if self.water_sensor.get_reflectivity_callback_threshold().option == '<':
+            self.water_sensor.set_reflectivity_callback_threshold('>', self.WATER_TOP_THRESHOLD, 0)
+        else:
+            self.water_sensor.set_reflectivity_callback_threshold('<', self.WATER_BOTTOM_THRESHOLD, 0)
+            result = self.water_stat.increment()
+            if not result:
+                raise ConnectionError('Cannot reach statsd server')
 
-    def cb_line(self, *args, **kwargs):
-        pass
-
-    def create_hall_object(self, *args, **kwargs):
+    def create_gas_sensor(self, *args, **kwargs):
         # Create hall device object
-        self.hall = HallEffect(args[0], self.connection)
-        self.hall.register_callback(self.hall.CALLBACK_EDGE_COUNT, self.cb_hall)
-        self.hall.set_edge_count_callback_period(50)
+        self.gas_sensor = HallEffect(args[0], self.connection)
+        self.gas_sensor.register_callback(self.hall.CALLBACK_EDGE_COUNT, self.cb_gas)
+        self.gas_sensor.set_edge_count_callback_period(50)
 
-    def create_ambient_light_object(self, uid):
-        """Create ambient light object which is used to measure electricity
+    def create_water_sensor(self, *args, **kwargs):
+        self.water_sensor = Line(args[0], self.connection)
+        self.water_sensor.register_callback(self.water_sensor.CALLBACK_REFLECTIVITY_REACHED, self.cb_water)
+        self.water_sensor.set_reflectivity_callback_threshold('>', self.WATER_TOP_THRESHOLD, 0)
 
-        My electricity meter uses light flashes to indicate that one Wh is delivered by the utility company. These
-        flashes are not easily countable. There are several problems:
-        1. The flash is short in duration but not infinitely short,
-           If the emitted light flash were infinitely short in duration, then we could determine exactly at which moment
-           it occurs and when the next one occurs. Unfortunately, the shape of the flash is as follows. The luminance
-           rises very rapidly and then dies down rapidly. So, the flash takes some time (approximately 100 milliseconds)
-           to occur. If we naively set a callback for every value other than 0, we would get several measurements for
-           one flash.
-        2. Flashes are measured having different intensities,
-           I'm not sure why this happens, but the bricklet sometimes reports different values for each flash. We cannot
-           assume that each flash results in roughly the same intensity.
-        3. The time interval between flashes may vary, realistically, between 1 second and 30 seconds or even more.
-           These intervals are highly variable, which means that we cannot just take measurements at certain intervals.
-        4. Someone may open the closet where the electricity meter is located, inadvertently increasing the light
-           intensity. This is still an unsolved problem.
-
-        The solution is to set the debounce period to approximately 400 milliseconds, long enough for the light
-        intensity to return to zero after a flash, but short enough to be ready for the next light flash.
-
-        :param uid: the unique identifier for the ambient light sensor
-        """
-        self.ambient = AmbientLight(uid, self.connection)
-        self.ambient.register_callback(self.ambient.CALLBACK_ILLUMINANCE_REACHED, self.cb_ambient)
-        self.ambient.set_illuminance_callback_threshold('>', 0, 10)
-        self.ambient.set_analog_value_callback_period(400)
-        self.ambient.measured_amount = 0
-
-    def create_line_object(self, *args, **kwargs):
+    def create_electricity_sensor(self, *args, **kwargs):
         # Create line object
-        self.line = Line(args[0], self.connection)
-        self.line.register_callback(self.line.CALLBACK_REFLECTIVITY_REACHED, self.cb_line)
-        self.line.set_reflectivity_callback_threshold('>', 3905, 0)
+        self.electricity_sensor = Line(args[0], self.connection)
+        self.electricity_sensor.register_callback(self.line.CALLBACK_REFLECTIVITY_REACHED, self.cb_electricity)
+        self.electricity_sensor.set_reflectivity_callback_threshold('>', self.ELECTRICITY_TOP_THRESHOLD, 0)
 
     @staticmethod
     def is_device_connected(enumeration_type):
@@ -105,8 +87,7 @@ class BrickConnection(object):
     def cb_enumerate(self, uid, connected_uid, position, hardware_version, firmware_version, device_identifier,
                      enumeration_type):
         """
-        Callback handles device connections and configures possibly lost configuration of line, hall and reflectivity
-        callbacks
+        Callback handles device connections and configures possibly lost configuration of line and hall callbacks
     
         :param uid: the unique identifier for the bricklet
         :param connected_uid:
@@ -118,13 +99,15 @@ class BrickConnection(object):
         """
         if self.is_device_connected(enumeration_type):
             if device_identifier == HallEffect.DEVICE_IDENTIFIER:
-                self.create_hall_object(uid, connected_uid, position, hardware_version, firmware_version,
-                                        device_identifier, enumeration_type)
-            if device_identifier == AmbientLight.DEVICE_IDENTIFIER:
-                self.create_ambient_light_object(uid)
+                self.create_gas_sensor(uid, connected_uid, position, hardware_version, firmware_version,
+                                       device_identifier, enumeration_type)
             if device_identifier == Line.DEVICE_IDENTIFIER:
-                self.create_line_object(uid, connected_uid, position, hardware_version, firmware_version,
-                                        device_identifier, enumeration_type)
+                if position == 'B':
+                    self.create_water_sensor(uid, connected_uid, position, hardware_version, firmware_version,
+                                             device_identifier, enumeration_type)
+                elif position == 'C':
+                    self.create_electricity_sensor(uid, connected_uid, position, hardware_version, firmware_version,
+                                                   device_identifier, enumeration_type)
 
     def cb_connected(self, connected_reason):
         """

@@ -6,3 +6,4 @@ mock
 nose
 Flask-Restless
 Flask-SQLAlchemy
+python-statsd
