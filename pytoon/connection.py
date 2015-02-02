@@ -57,7 +57,7 @@ class BrickConnection(object):
     def create_gas_sensor(self, *args, **kwargs):
         # Create hall device object
         self.gas_sensor = HallEffect(args[0], self.connection)
-        self.gas_sensor.register_callback(self.hall.CALLBACK_EDGE_COUNT, self.cb_gas)
+        self.gas_sensor.register_callback(self.gas_sensor.CALLBACK_EDGE_COUNT, self.cb_gas)
         self.gas_sensor.set_edge_count_callback_period(50)
 
     def create_water_sensor(self, *args, **kwargs):
