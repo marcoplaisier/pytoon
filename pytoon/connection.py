@@ -63,13 +63,13 @@ class BrickConnection(object):
     def create_water_sensor(self, *args, **kwargs):
         self.water_sensor = Line(args[0], self.connection)
         self.water_sensor.register_callback(self.water_sensor.CALLBACK_REFLECTIVITY_REACHED, self.cb_water)
-        self.water_sensor.set_reflectivity_callback_threshold('>', self.WATER_TOP_THRESHOLD, 0)
+        self.water_sensor.set_reflectivity_callback_threshold('<', self.WATER_BOTTOM_THRESHOLD, 0)
 
     def create_electricity_sensor(self, *args, **kwargs):
         # Create line object
         self.electricity_sensor = Line(args[0], self.connection)
         self.electricity_sensor.register_callback(self.line.CALLBACK_REFLECTIVITY_REACHED, self.cb_electricity)
-        self.electricity_sensor.set_reflectivity_callback_threshold('>', self.ELECTRICITY_TOP_THRESHOLD, 0)
+        self.electricity_sensor.set_reflectivity_callback_threshold('<', self.ELECTRICITY_BOTTOM_THRESHOLD, 0)
 
     @staticmethod
     def is_device_connected(enumeration_type):
