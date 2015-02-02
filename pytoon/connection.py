@@ -1,9 +1,11 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_hall_effect import HallEffect
 from tinkerforge.bricklet_line import Line
 import statsd
+
 
 
 class BrickConnection(object):
@@ -32,11 +34,13 @@ class BrickConnection(object):
         self.connection.enumerate()
 
     def cb_gas(self, *args, **kwargs):
+        print("gas callback")
         result = self.gas_stat.increment()
         if not result:
             raise ConnectionError('Cannot reach statsd server')
 
     def cb_electricity(self, *args, **kwargs):
+        print("electricity callback")
         if self.electricity_sensor.get_reflectivity_callback_threshold().option == '<':
             self.electricity_sensor.set_reflectivity_callback_threshold('>', self.ELECTRICITY_TOP_THRESHOLD, 0)
         else:
@@ -46,6 +50,7 @@ class BrickConnection(object):
                 raise ConnectionError('Cannot reach statsd server')
 
     def cb_water(self, *args, **kwargs):
+        print("water callback")
         if self.water_sensor.get_reflectivity_callback_threshold().option == '<':
             self.water_sensor.set_reflectivity_callback_threshold('>', self.WATER_TOP_THRESHOLD, 0)
         else:
