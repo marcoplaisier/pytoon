@@ -39,14 +39,3 @@ def step_impl(context, sensor_type):
         context.brick_conn.cb_hall()
     else:
         assert False
-
-@then('we store the {sensor_type} measurements in the database')
-def step_impl(context, sensor_type):
-    if sensor_type == 'electricity':
-        result = Electricity.query.all()
-    elif sensor_type == 'gas':
-        result = Gas.query.all()
-    else:
-        assert False
-
-    assert result is not None
