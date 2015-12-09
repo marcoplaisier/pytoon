@@ -25,33 +25,15 @@ class BrickConnection(object):
         self.connection.connect(host, port)
         self.connection.enumerate()
 
-    def cb_hall(self, *args, **kwargs):
-        from pytoon.main import Gas
-        gas_timestamp = Gas(timestamp=datetime.now())
-        print('Gas: {}'.format(gas_timestamp))
-        self.database.session.add(gas_timestamp)
-        self.database.session.commit()
-
     def cb_ambient(self, *args, **kwargs):
         """Callback for the ambient light sensor.
 
         When the connected ambient light sensor detects an increase in the luminance, this callback is called. This
         results in the timestamp of this call being written into the database for later processing.
         """
-        from pytoon.main import Electricity
-        electricity_timestamp = Electricity(timestamp=datetime.now())
-        print('Electricity: {}'.format(electricity_timestamp))
-        self.database.session.add(electricity_timestamp)
-        self.database.session.commit()
-
-    def cb_line(self, *args, **kwargs):
-        pass
-
-    def create_hall_object(self, *args, **kwargs):
-        # Create hall device object
-        self.hall = HallEffect(args[0], self.connection)
-        self.hall.register_callback(self.hall.CALLBACK_EDGE_COUNT, self.cb_hall)
-        self.hall.set_edge_count_callback_period(50)
+        print("Ambient")
+        print(args)
+        print(kwargs)
 
     def create_ambient_light_object(self, uid):
         """Create ambient light object which is used to measure electricity
@@ -83,12 +65,6 @@ class BrickConnection(object):
         self.ambient.set_analog_value_callback_period(400)
         self.ambient.measured_amount = 0
 
-    def create_line_object(self, *args, **kwargs):
-        # Create line object
-        self.line = Line(args[0], self.connection)
-        self.line.register_callback(self.line.CALLBACK_REFLECTIVITY_REACHED, self.cb_line)
-        self.line.set_reflectivity_callback_threshold('>', 3905, 0)
-
     @staticmethod
     def is_device_connected(enumeration_type):
         """Check whether new devices become connected or available
@@ -117,14 +93,8 @@ class BrickConnection(object):
         :param enumeration_type: 
         """
         if self.is_device_connected(enumeration_type):
-            if device_identifier == HallEffect.DEVICE_IDENTIFIER:
-                self.create_hall_object(uid, connected_uid, position, hardware_version, firmware_version,
-                                        device_identifier, enumeration_type)
             if device_identifier == AmbientLight.DEVICE_IDENTIFIER:
                 self.create_ambient_light_object(uid)
-            if device_identifier == Line.DEVICE_IDENTIFIER:
-                self.create_line_object(uid, connected_uid, position, hardware_version, firmware_version,
-                                        device_identifier, enumeration_type)
 
     def cb_connected(self, connected_reason):
         """
@@ -138,7 +108,7 @@ class BrickConnection(object):
 
 
 if __name__ == "__main__":
-    host = "192.168.178.35"
+    host = "localhost"
     port = 4223
     BrickConnection(host, port)
     input('Press key to exit\n')

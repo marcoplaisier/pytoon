@@ -1,8 +1,5 @@
 tinkerforge
-flask
 wheel
 behave
 mock
 nose
-Flask-Restless
-Flask-SQLAlchemy
